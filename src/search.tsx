@@ -1,4 +1,4 @@
-import { ActionPanel, Action, Icon, List } from "@raycast/api";
+import { ActionPanel, Action, Icon, List, Color } from "@raycast/api";
 import { useEffect, useState } from "react";
 
 const SCHEMA_URL = "https://app.faraday.ai/api.json";
@@ -18,12 +18,46 @@ type OpenAPISchema = {
 
 type OperationItem = {
   id: string;
-  icon: Icon;
+  icon: { source: Icon; tintColor: Color };
   title: string;
   subtitle: string;
-  accessory: string;
+  accessory: { text: string; color: Color };
   url: string;
 };
+
+function getMethodIcon(method: string): { source: Icon; tintColor: Color } {
+  switch (method.toUpperCase()) {
+    case "GET":
+      return { source: Icon.ArrowDownCircle, tintColor: Color.PrimaryText };
+    case "POST":
+      return { source: Icon.ArrowUpCircle, tintColor: Color.PrimaryText };
+    case "PUT":
+      return { source: Icon.ArrowUpCircle, tintColor: Color.PrimaryText };
+    case "PATCH":
+      return { source: Icon.Pencil, tintColor: Color.PrimaryText };
+    case "DELETE":
+      return { source: Icon.Trash, tintColor: Color.PrimaryText };
+    default:
+      return { source: Icon.Link, tintColor: Color.SecondaryText };
+  }
+}
+
+function getMethodColor(method: string): Color {
+  switch (method.toUpperCase()) {
+    case "GET":
+      return Color.Green;
+    case "POST":
+      return Color.Blue;
+    case "PUT":
+      return Color.Orange;
+    case "PATCH":
+      return Color.Yellow;
+    case "DELETE":
+      return Color.Red;
+    default:
+      return Color.SecondaryText;
+  }
+}
 
 function transformSchemaToItems(data: OpenAPISchema): { [tag: string]: OperationItem[] } {
   const groups: { [tag: string]: OperationItem[] } = {};
@@ -35,10 +69,10 @@ function transformSchemaToItems(data: OpenAPISchema): { [tag: string]: Operation
         if (!groups[tag]) groups[tag] = [];
         groups[tag].push({
           id: `${method.toUpperCase()} ${path}`,
-          icon: Icon.Link,
+          icon: getMethodIcon(method),
           title: op.summary || `${method.toUpperCase()} ${path}`,
           subtitle: path,
-          accessory: method.toUpperCase(),
+          accessory: { text: method.toUpperCase(), color: getMethodColor(method) },
           url: PAGE_URL + op.operationId.toLowerCase(),
         });
       });
@@ -78,7 +112,7 @@ export default function Command() {
               icon={item.icon}
               title={item.title}
               subtitle={item.subtitle}
-              accessories={[{ icon: Icon.Text, text: item.accessory }]}
+              accessories={[{ tag: { value: item.accessory.text, color: item.accessory.color } }]}
               actions={
                 <ActionPanel>
                   <Action.OpenInBrowser url={item.url} />
