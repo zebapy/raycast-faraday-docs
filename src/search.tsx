@@ -125,7 +125,6 @@ export default function Command() {
                     <Action.CopyToClipboard content={item.url} title="Copy Docs URL" />
                     <Action.OpenInBrowser url={mdUrl} title="Open as Markdown" />
                     <Action.OpenInBrowser url={claudeUrl} title="Ask Claude About This Page" />
-                    {/* eslint-disable-next-line @raycast/prefer-title-case */}
                     <Action.OpenInBrowser url={chatgptUrl} title="Ask ChatGPT About This Page" />
                   </ActionPanel>
                 }

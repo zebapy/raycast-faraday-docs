@@ -9,7 +9,7 @@
   "commands": [
     {
       "name": "search",
-      "title": "Search Faraday API reference",
+      "title": "Search Faraday API Reference",
       "description": "Browse the Faraday API reference documentation.",
       "mode": "view"
     }
