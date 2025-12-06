@@ -26,19 +26,20 @@ type OperationItem = {
 };
 
 function getMethodIcon(method: string): { source: Icon; tintColor: Color } {
+  const color = getMethodColor(method);
   switch (method.toUpperCase()) {
     case "GET":
-      return { source: Icon.ArrowDownCircle, tintColor: Color.PrimaryText };
+      return { source: Icon.ArrowDownCircle, tintColor: color };
     case "POST":
-      return { source: Icon.ArrowUpCircle, tintColor: Color.PrimaryText };
+      return { source: Icon.ArrowUpCircle, tintColor: color };
     case "PUT":
-      return { source: Icon.ArrowUpCircle, tintColor: Color.PrimaryText };
+      return { source: Icon.ArrowUpCircle, tintColor: color };
     case "PATCH":
-      return { source: Icon.Pencil, tintColor: Color.PrimaryText };
+      return { source: Icon.Pencil, tintColor: color };
     case "DELETE":
-      return { source: Icon.Trash, tintColor: Color.PrimaryText };
+      return { source: Icon.Trash, tintColor: color };
     default:
-      return { source: Icon.Link, tintColor: Color.SecondaryText };
+      return { source: Icon.Link, tintColor: color };
   }
 }
 
@@ -106,21 +107,30 @@ export default function Command() {
     <List isLoading={isLoading} searchBarPlaceholder="Search operations...">
       {Object.entries(items).map(([tag, ops]) => (
         <List.Section key={tag} title={tag}>
-          {ops.map((item) => (
-            <List.Item
-              key={item.id}
-              icon={item.icon}
-              title={item.title}
-              subtitle={item.subtitle}
-              accessories={[{ tag: { value: item.accessory.text, color: item.accessory.color } }]}
-              actions={
-                <ActionPanel>
-                  <Action.OpenInBrowser url={item.url} />
-                  <Action.CopyToClipboard content={item.url} />
-                </ActionPanel>
-              }
-            />
-          ))}
+          {ops.map((item) => {
+            const mdUrl = `${item.url}.md`;
+            const prompt = `Read ${mdUrl} so I can ask questions about it.`;
+            const claudeUrl = `https://claude.ai/?prompt=${encodeURIComponent(prompt)}`;
+            const chatgptUrl = `https://chat.openai.com/?prompt=${encodeURIComponent(prompt)}`;
+            return (
+              <List.Item
+                key={item.id}
+                icon={item.icon}
+                title={item.title}
+                subtitle={item.subtitle}
+                accessories={[{ tag: { value: item.accessory.text, color: item.accessory.color } }]}
+                actions={
+                  <ActionPanel>
+                    <Action.OpenInBrowser url={item.url} title="Open Docs in Browser" />
+                    <Action.CopyToClipboard content={item.url} title="Copy Docs URL" />
+                    <Action.OpenInBrowser url={mdUrl} title="Open as Markdown" />
+                    <Action.OpenInBrowser url={claudeUrl} title="Ask Claude About This Page" />
+                    <Action.OpenInBrowser url={chatgptUrl} title="Ask ChatGPT About This Page" />
+                  </ActionPanel>
+                }
+              />
+            );
+          })}
         </List.Section>
       ))}
     </List>
