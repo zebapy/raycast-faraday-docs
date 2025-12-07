@@ -1,4 +1,4 @@
-# Faraday Docs Changelog
+# Faraday API Reference Docs Changelog
 
 ## [Initial Version] - {PR_MERGE_DATE}
 
